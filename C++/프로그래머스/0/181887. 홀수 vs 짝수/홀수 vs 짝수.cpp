@@ -15,12 +15,7 @@ int solution(vector<int> num_list) {
             sum2+=num_list[i];
         }
     }
-    if(sum1>sum2){
-        answer=sum1;
-    }else if(sum1<sum2){
-        answer=sum2;
-    }else{
-        answer=sum1;
-    }
+    
+    answer=max(sum1, sum2);
     return answer;
 }
