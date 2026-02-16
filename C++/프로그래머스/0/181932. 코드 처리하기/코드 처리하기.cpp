@@ -1,0 +1,26 @@
+#include <string>
+
+using namespace std;
+
+string solution(string code) {
+    string answer = "";
+    int mode=0;
+        
+    for(int i=0;i<code.size();i++){
+        if(code[i]=='1'){
+            mode^=1;
+            continue;
+        }
+        
+        if(mode==0){
+            if(i%2==0){
+                answer+=code[i];
+            }
+        }else{ // mode == 1
+            if(i%2==1){
+                answer+=code[i];
+            }
+        }
+    }
+    return answer.empty() ? "EMPTY" : answer;
+}
