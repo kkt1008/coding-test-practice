@@ -22,5 +22,8 @@ string solution(string code) {
             }
         }
     }
-    return answer.empty() ? "EMPTY" : answer;
+    if(answer.empty()){
+        answer = "EMPTY";
+    }
+    return answer;
 }
