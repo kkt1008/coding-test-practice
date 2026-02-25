@@ -1,21 +1,31 @@
+#include <string>
 #include <vector>
-#include <climits>
+#include <climits> // INT_MAX 사용하기 위해 추가
 using namespace std;
 
 vector<int> solution(vector<int> arr, vector<vector<int>> queries) {
     vector<int> answer;
-    answer.reserve(queries.size());
-
-    for (const auto& q : queries) {
-        int s = q[0], e = q[1], k = q[2];
-
-        int best = INT_MAX;
-        for (int i = s; i <= e; ++i) {
-            if (arr[i] > k) best = min(best, arr[i]);
+    
+    for(int i=0;i<queries.size();i++){//쿼리의 갯수만큼 반복
+        int s = queries[i][0];
+        int e = queries[i][1];
+        int k = queries[i][2]; 
+        int temp = INT_MAX;
+            
+        for(int i=s;i<=e;i++){
+            if(arr[i] > k){
+                temp = min(temp,arr[i]);
+            }
         }
-
-        answer.push_back(best == INT_MAX ? -1 : best);
+        
+        if(temp == INT_MAX){
+            answer.push_back(-1);
+        }else{
+            answer.push_back(temp);
+        }
+        
     }
-
+    
+    
     return answer;
 }
