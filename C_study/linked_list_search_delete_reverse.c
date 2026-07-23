@@ -18,28 +18,45 @@ linkedList_h* createLinkedList_h(void);
 void printList(linkedList_h* L);
 void insertFirstNode(linkedList_h* L, char* x);
 void freeLinkedList_h(linkedList_h* L);
+void insertMiddleNode(linkedList_h* L, listNode* pre, char* x);
+void insertLastNode(linkedList_h* L, char* x);
+void deleteNode(linkedList_h* L, listNode* p);
+void reverse(linkedList_h* L);
+listNode* searchNode(linkedList_h* L, char* x);
+
 
 int main() {
 	linkedList_h* L;
+	listNode* p;
 	L = createLinkedList_h(); //노드 생성
-	printf("(1) 공백 리스트 생성하기 \n");
-	printList(L);
+	printf("(1) 리스트에 [월], [수], [일] 노드 생성하기 \n");
+	insertLastNode(L, "월"); insertLastNode(L, "수"); insertLastNode(L, "일");
+	printList(L); 
 	
 	printf("(2) 리스트에 [수] 노드 삽입하기\n");
-	insertFirstNode(L, "수"); //노드 추가
-	printList(L);
-	
-	printf("(3) 리스트 마지막에 [금] 노드 삽입하기\n");
-	insertFirstNode(L, "금");
+	p = searchNode(L, "수");
+	if (p == NULL) {
+		printf("찾는 데이터가 없습니다\n");
+	}
+	else {
+		printf("[%s]를 찾았습니다\n", p->data);
+
+	}
+
+	printf("(3) 리스트에서 [수] 뒤에 [금] 노드 삽입하기\n");
+	insertMiddleNode(L,p, "금");
 	printList(L);
 
 	printf("(4) 리스트 첫 번째에 [월] 노드 삽입하기\n");
-	insertFirstNode(L, "월");
+	p = searchNode(L, "일");
+	deleteNode(L, p);
 	printList(L);
 
 	printf("(5) 리스트 공간을 해제하여 공백 리스트로 만들기\n");
-	freeLinkedList_h(L); //노드 해제
+	reverse(L);
 	printList(L);
+
+	freeLinkedList_h(L);
 
 	return 0;
 }
@@ -126,17 +143,18 @@ void deleteNode(linkedList_h* L, listNode* p) { // L: 리스트 시작 주소(�
 	if (L->head == NULL) {//공백리스트라 삭제할 노드 없음
 		return;//연산 중지
 	}
-	if (L->head->link = NULL) {//리스트에 노드가 한개(헤더 노드가 유일)
+	else if (L->head->link = NULL) {//리스트에 노드가 한개(헤더 노드가 유일)
 		free(L->head); //헤더 노드를 메모리 해제
 		L->head = NULL; //리스트 시작 포인터 NULL로 초기화 
 		return;
 	}
-	else if (p = NULL) return; //삭제할 노드가 없으면 연산 중단
+	else if (p == NULL) return; //삭제할 노드가 없으면 연산 중단
 	else {//리스트에 노드가 존재하는 경우
 		pre = L->head; //삭제할 노드의 선행자 노드를 포인터 pre를 이용해 찾기
-		while (pre->link != p) {//삭제 노드의 선행 노드를 찾을때까지 탐색 
+		while (pre != NULL && pre->link != p) {//삭제 노드의 선행 노드를 찾을때까지 탐색 
 			pre = pre->link;
 		}
+		if (pre == NULL) return; // p가 리스트에 없음
 		pre->link = p->link; //선행자 노드와 삭제할 노드의 다음 노드를 연결
 		free(p); //삭제 노드의 메모리 해제
 	}
