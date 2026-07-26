@@ -17,6 +17,9 @@ typedef struct {
 linkedList_h* createLinkedList_h(void) {
 	linkedList_h* CL;
 	CL = (linkedList_h*)malloc(sizeof(linkedList_h));
+	if (CL == NULL) {//malloc 실패 검사
+		return;
+	}
 	CL->head = NULL;
 	return CL;
 }
@@ -25,7 +28,14 @@ linkedList_h* createLinkedList_h(void) {
 void printList(linkedList_h* CL) {
 	listNode* p;
 	printf("CL=(");
+
+	if (CL == NULL || CL->head == NULL) {//공백 리스트이면 빈 상태 출력
+		printf(")\n");
+		return;
+	}
+
 	p = CL->head;
+	
 	do {
 		printf("%s", p->data);
 		p = p->link;
@@ -61,58 +71,61 @@ void insertFirstNode(linkedList_h* CL, char* x) {
 //pre뒤에 노드를 삽입하는 함수
 void insertMiddleNode(linkedList_h* CL, listNode* pre, char* x) {
 	listNode* newNode;
+	if (CL == NULL || pre == NULL|| x==NULL) {//pre가 있는 노드인지 검색
+		return;
+	}
+
 	newNode = (listNode*)malloc(sizeof(listNode));
+	if (newNode == NULL) {//malloc 실패 여부 검사 습관화!!
+		return;
+	}
+
 	strcpy(newNode->data, x);
-	if (CL == NULL) {//원형리스트가 비어 있으면 new가 첫번째 노드
-		CL->head = newNode;
-		newNode->link = newNode;
-	}
-	else {//원형리스트가 존재하면 
-		newNode->link = pre->link;
-		pre->link = newNode;
-	}
+	newNode->link = pre->link;
+	pre->link = newNode;
+	return;
 }
 
 //pre뒤에 노드를 삭제하는 함수
 void deleteNode(linkedList_h* CL, listNode* old) {
 	listNode* pre;
-	if (CL->head == NULL) {//공백 리스트는 삭제 연산 중단
+	if (CL==NULL||CL->head == NULL||old==NULL) {//공백 리스트는 삭제 연산 중단
 		return;
 	}
-	if (CL->head->link == NULL) {//노드가 1개만 있는 경우
+	if (CL->head->link == CL->head) {//노드가 1개만 있는 경우
 		free(CL->head); //1개 노드만 해제 
 		CL->head = NULL; //리스트 시작 포인터 NULL로 설정
 		return;
 	}
-	else if (old == NULL) {//삭제할 노드가 없는 경우 삭제 연산 중단
-		return;
+
+	pre = CL->head; //리스트 시작 노드에 pre포인터 연결
+	while (pre->link != old) {//old노드 전까지 탐색
+		pre = pre->link;
 	}
-	else {
-		pre = CL->head; //리스트 시작 노드에 pre포인터 연결
-		while (pre->link != old) {//old노드 전까지 탐색
-			pre = pre->link;
-		}
-		pre->link = old->link;
-		if (old == CL->head) {
-			CL->head = old->link;
-		}
-		free(old);
+	pre->link = old->link;
+	if (old == CL->head) {
+		CL->head = old->link;
 	}
+	free(old);
 }
 
 //원형 연결 리스트에서 x노드를 찾는 함수
+//리스트에 없는 노드를 요청해도 항상 노드 전체를 한 바퀴 탐색한 뒤 결과 반환
 listNode* searchNode(linkedList_h* CL, char* x) {
 	listNode* temp;
+	
+	if (CL == NULL || CL->head == NULL) {
+		return NULL;
+	}
 	temp = CL->head;
-	while (temp != NULL) {
+
+	do {
 		if (strcmp(temp->data, x) == 0) {
 			return temp;//같을 경우 해당 노드 반환
 		}
-		else {//다를 경우 다음 노드로 이동
-			temp = temp->link;
-		}
-	}
-	return temp;
+		temp = temp->link; //다를 경우 다음 노드로 이동
+	} while (temp != CL->head); //다시 시작노드로 돌아올 때까지 
+	return NULL;
 }
 
 int main(void) {
